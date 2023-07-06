@@ -31,6 +31,12 @@ import androidx.compose.ui.unit.dp
 import com.example.tiptime.ui.theme.TipTimeTheme
 import java.text.NumberFormat
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Switch
+
 
 
 
@@ -59,6 +65,7 @@ fun TipTimeLayout() {
 
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tip = calculateTip(amount,tipPercent)
+    var roundUp by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.padding(40.dp),
@@ -83,6 +90,12 @@ fun TipTimeLayout() {
             onValueChanged = { tipInput = it},
             modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
         )
+        RoundTheTipRow (
+            roundUp = roundUp,
+            onRoundUpChanged = { roundUp = it},
+            modifier = Modifier.padding(bottom = 32.dp)
+
+        )
         Text(
             text = stringResource(R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
@@ -99,7 +112,7 @@ fun EditNumberField(
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TextField (
+    TextField(
         value = value,
         singleLine = true,
         modifier = modifier,
@@ -107,12 +120,37 @@ fun EditNumberField(
         label = { Text(stringResource(R.string.bill_amount)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
-
-
-
-
-
 }
+
+    @Composable
+        fun RoundTheTipRow (
+        modifier: Modifier = Modifier,
+        roundUp : Boolean,
+        onRoundUpChanged: (Boolean) -> Unit
+
+    ){
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .size(48.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {Text(text = stringResource(R.string.round_up_tip))
+            Switch(
+                modifier = modifier.fillMaxWidth().wrapContentWidth(Alignment.End),
+                checked = roundUp,
+                onCheckedChange = onRoundUpChanged,
+            )
+        }
+
+
+
+    }
+
+
+
+
+
+
 
 /**
  * Calculates the tip based on the user input and format the tip amount
